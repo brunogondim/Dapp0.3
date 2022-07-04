@@ -8,6 +8,18 @@
             "env": {
                 "ROLLUP_HTTP_SERVER_URL": "http://127.0.0.1:5004"
             },
+            "cwd": "${workspaceFolder}/datasets",
+            "name": "Echo Python DApp",
+            "type": "python",
+            "request": "launch",
+            "python": "${workspaceFolder}/datasets/.env/bin/python3",
+            "program": "datasets.py",
+            "gevent": false,
+        },
+        {
+            "env": {
+                "ROLLUP_HTTP_SERVER_URL": "http://127.0.0.1:5004"
+            },
             "cwd": "${workspaceFolder}/echo-python",
             "name": "Echo Python DApp",
             "type": "python",

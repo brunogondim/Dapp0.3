@@ -19,7 +19,7 @@ import datasets_sqlite
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
-my_class = datasets_sqlite.Myclass(logger)
+my_class = datasets_sqlite.Myclass()
 
 rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
 logger.info(f"HTTP rollup_server url is {rollup_server}")
@@ -79,7 +79,7 @@ def handle_advance(data):
         #logger.info("Adding notice")
         #response = requests.post(rollup_server + "/notice", json={"payload": data["payload"]})
         #logger.info(f"Received notice status {response.status_code} body {response.content}")
-        my_class.advance(data,rollup_server,hex2str,hex2str)
+        my_class.advance(data,rollup_server,hex2str,str2hex)
 
     except Exception as e:
         status = "reject"

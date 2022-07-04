@@ -61,21 +61,20 @@
 
 from asyncio.log import logger
 from os import environ
-import traceback
-import logging
+
 import requests
 import sqlite3
 import json
 
-class Myclass(logger): 
+class Myclass():
 
-    def advance(data,rollup_server,hex2str,str2hex):
+    def advance(self,data,rollup_server,hex2str,str2hex):
 
         logger.info(f"Received advance request body {data}")
 
         # retrieves SQL statement from input payload
-        #statement = hex2str(data["payload"])
-        statement = data["payload"]
+        statement = hex2str(data["payload"])
+        #statement = data["payload"]
         logger.info(f"Received statement: '{statement}'")
 
         # connects to internal database
