@@ -9,10 +9,10 @@ def str2hex(str):
 
 web3 = Web3(Web3.HTTPProvider("http://localhost:8545"))
 
-adress_file = open("../deployments/localhost/dapp.address",'r')
+adress_file = open("../datasets/deployments/localhost/dapp.address",'r')
 rollups_address = adress_file.read()
     
-input_abi_file = open("../deployments/localhost/InputFacet.json",'r')
+input_abi_file = open("../datasets/deployments/localhost/InputFacet.json",'r')
 input_abi_json = json.load(input_abi_file)
 input_abi = input_abi_json["abi"]
 
