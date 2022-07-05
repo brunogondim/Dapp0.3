@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="text-center">
+    <h3>Data Management</h3>
+</div>
+<div class="text-center">
+    <form class="form-check-inline" method="GET" action="">
+        <div class="form-check form-check-inline">
+            <input class="btn-check" type="radio" onclick="ShowStatement()" id="insert" autocomplete="off" name="input_type" value="insert">  
+            <label class="btn btn-primary btn-sm" for="insert">New data</label> 
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="btn-check" type="radio" onclick="ShowStatement()" id="select" autocomplete="off" name="input_type" value="select">
+            <label class="btn btn-primary btn-sm" for="select">Search</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="btn-check" type="radio" onclick="ShowStatement()" id="update" autocomplete="off" name="input_type" value="update">
+            <label class="btn btn-primary btn-sm" for="update">Update data</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="btn-check" type="radio" onclick="ShowStatement()" id="del" autocomplete="off" name="input_type" value="del">
+            <label class="btn btn-primary btn-sm" for="del">Delete data</label>
+        </div>
+    </form>
+</div>
+
+<div class="col-xs-12" style="height:30px;"></div>
+
+<div class="container" id="insert_statement" style="display: none">
+    <form method="POST" action="/insert" id="ins_form">
+        {{ insert_form.csrf_token }}
+        <table class="table table-sm">
+            <thead class="thead-light">
+                <tr align="center">
+                    <th scope="col">&nbsp;</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Sex</th>
+                    <th scope="col">BMI</th>
+                    <th scope="col">Number of children</th>
+                    <th scope="col">Is a smoker?</th>
+                    <th scope="col">Region</th>
+                    <th scope="col">Charges</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr align="center">
+                    <th scope="row">Insert data:</th>
+                    <td>{{ insert_form.age (class="form-control form-control-sm") }}</td>
+                    <td>{{ insert_form.sex (class="form-control form-control-sm") }}</td>
+                    <td>{{ insert_form.bmi (class="form-control form-control-sm") }}</td>
+                    <td>{{ insert_form.children (class="form-control form-control-sm") }}</td>
+                    <td>{{ insert_form.smoker (class="form-control form-control-sm") }}</td>
+                    <td>{{ insert_form.region (class="form-control form-control-sm") }}</td>
+                    <td>{{ insert_form.charges (class="form-control form-control-sm") }}</td>
+                </tr>
+            </tbody>
+        </table>
+        {{ insert_form.submit (class="btn btn-primary btn-sm", form="ins_form", style="float: right;") }}
+    </form>
+</div>
+
+<div class="container" id="select_statement" style="display: none">
+    <form method="POST" action="/select" id="sel_form">
+        {{ select_form.csrf_token }}
+        <table class="table table-sm">
+            <thead class="thead-light">
+                <tr align="center">
+                    <th scope="col">&nbsp;</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Sex</th>
+                    <th scope="col">BMI</th>
+                    <th scope="col">Number of children</th>
+                    <th scope="col">Is a smoker?</th>
+                    <th scope="col">Region</th>
+                    <th scope="col">Charges</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr align="center">
+                    <th scope="row">Filter by:</th>
+                    <td>{{ select_form.age (class="form-control form-control-sm") }}</td>
+                    <td>{{ select_form.sex (class="form-control form-control-sm") }}</td>
+                    <td>{{ select_form.bmi (class="form-control form-control-sm") }}</td>
+                    <td>{{ select_form.children (class="form-control form-control-sm") }}</td>
+                    <td>{{ select_form.smoker (class="form-control form-control-sm") }}</td>
+                    <td>{{ select_form.region (class="form-control form-control-sm") }}</td>
+                    <td>{{ select_form.charges (class="form-control form-control-sm") }}</td>
+                </tr>
+            </tbody>
+        </table>
+        {{ select_form.submit (class="btn btn-primary btn-sm", form="sel_form", style="float: right;") }}
+    </form>
+</div>
+
+<div class="container" id="update_statement" style="display: none">
+    <form method="POST" action="/update" id="upd_form">
+        {{ update_form.csrf_token }}
+        <table class="table table-sm">
+            <thead class="thead-light">
+                <tr align="center">
+                    <th scope="col">&nbsp;</th>
+                    <th scope="col">Attribute</th>
+                    <th scope="col">New Value</th>
+                    <th scope="col">&nbsp;</th>
+                    <th scope="col">Attribute</th>
+                    <th scope="col">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr align="center">
+                    <th scope="row">Update data:</th>
+                    <td>{{ update_form.attribute (class="form-control form-control-sm") }}</td>
+                    <td>{{ update_form.new_value (class="form-control form-control-sm") }}</td>
+                    <th scope="row">From:</th>
+                    <td>{{ update_form.from_attribute (class="form-control form-control-sm") }}</td>
+                    <td>{{ update_form.from_value (class="form-control form-control-sm") }}</td>
+                    <tr align="center">
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <th scope="row">Condition:</th>
+                        <td>{{ update_form.condition_attribute (class="form-control form-control-sm") }}</td>
+                        <td>{{ update_form.condition_value (class="form-control form-control-sm") }}</td>
+                    </tr>
+                </tr>
+            </tbody>
+        </table>
+        {{ update_form.submit (class="btn btn-primary btn-sm", form="upd_form", style="float: right;") }}
+    </form>
+</div>
+
+<div class="container" id="del_statement" style="display: none">
+    <form method="POST" action="/delete" id="del_form">
+        {{ delete_form.csrf_token }}
+        <table class="table table-sm">
+            <thead class="thead-light">
+                <tr align="center">
+                    <th scope="col">&nbsp;</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Sex</th>
+                    <th scope="col">BMI</th>
+                    <th scope="col">Number of children</th>
+                    <th scope="col">Is a smoker?</th>
+                    <th scope="col">Region</th>
+                    <th scope="col">Charges</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr align="center">
+                    <th scope="row">Delete data:</th>
+                    <td>{{ delete_form.age (class="form-control form-control-sm") }}</td>
+                    <td>{{ delete_form.sex (class="form-control form-control-sm") }}</td>
+                    <td>{{ delete_form.bmi (class="form-control form-control-sm") }}</td>
+                    <td>{{ delete_form.children (class="form-control form-control-sm") }}</td>
+                    <td>{{ delete_form.smoker (class="form-control form-control-sm") }}</td>
+                    <td>{{ delete_form.region (class="form-control form-control-sm") }}</td>
+                    <td>{{ delete_form.charges (class="form-control form-control-sm") }}</td>
+                </tr>
+            </tbody>
+        </table>
+        {{ delete_form.submit (class="btn btn-primary btn-sm", form="del_form", style="float: right;") }}
+    </form>
+</div>
+
+<script type="text/javascript">
+    function ShowStatement() {
+        var insert = document.getElementById("insert");
+        var select = document.getElementById("select");
+        var update = document.getElementById("update");
+        var del = document.getElementById("del");
+
+        var insert_statement = document.getElementById("insert_statement");
+        var select_statement = document.getElementById("select_statement");
+        var update_statement = document.getElementById("update_statement");
+        var del_statement = document.getElementById("del_statement");
+
+        insert_statement.style.display = insert.checked ? "block" : "none";
+        select_statement.style.display = select.checked ? "block" : "none";
+        update_statement.style.display = update.checked ? "block" : "none";
+        del_statement.style.display = del.checked ? "block" : "none";
+    }
+
+    function SelectAll(source) {
+        checkboxes = document.getElementsByName('select_checkbox');
+        for(var i=0, n=checkboxes.length;i<n;i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
+</script>
+
+{% endblock content %}
