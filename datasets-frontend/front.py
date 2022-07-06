@@ -1,5 +1,6 @@
 import logging
-from flask import Flask, render_template, request, redirect
+import time
+from flask import Flask, render_template, request, redirect, flash
 from models.forms import InsertForm, SelectForm, UpdateForm, DeleteForm
 from controllers.addinput import tx_hash
 from controllers.notice import notice
@@ -23,57 +24,55 @@ def index():
 @app.route('/insert', methods=['GET', 'POST'])
 def insert():
     insert_form = InsertForm()
-    select_form = SelectForm()
-    update_form = UpdateForm()
-    delete_form = DeleteForm()
 
-    if insert_form.submit.data and insert_form.validate():
+    if insert_form.validate_on_submit():
         statement = str2hex(insert_form.insert_statement())
         tx_hash(statement)
-        print("insert")
+        flash("Added data.", 'success')
+    # else:
+    #     flash("Error.", 'error')
 
-    return render_template('addinput.html', insert_form=insert_form, select_form=select_form, update_form=update_form, delete_form=delete_form)
+    return render_template('insert.html', insert_form=insert_form)
 
 @app.route('/select', methods=['GET', 'POST'])
 def select():
-    insert_form = InsertForm()
     select_form = SelectForm()
-    update_form = UpdateForm()
-    delete_form = DeleteForm()
+    payload_list = []
 
-    if select_form.submit.data and select_form.validate():
+    if select_form.submit.data:
+        print(select_form.select_statement())
         statement = str2hex(select_form.select_statement())
         tx_hash(statement)
-        print("select")
+        flash("Selected data.", 'success')
+        time.sleep(8)
+        payload_list = notice('0')
 
-    return render_template('addinput.html', insert_form=insert_form, select_form=select_form, update_form=update_form, delete_form=delete_form)
+    return render_template('select.html', select_form=select_form, payload_list=payload_list)
 
 
 @app.route('/update', methods=['GET', 'POST'])
 def update():
-    insert_form = InsertForm()
-    select_form = SelectForm()
     update_form = UpdateForm()
-    delete_form = DeleteForm()
 
     if update_form.submit.data and update_form.validate():
         statement = str2hex(update_form.update_statement())
         tx_hash(statement)
-        print("update")
+        flash("Updated data", 'success')
+    # else:
+    #     flash("Error.", 'error')
 
-    return render_template('addinput.html', insert_form=insert_form, select_form=select_form, update_form=update_form, delete_form=delete_form)
+    return render_template('update.html', update_form=update_form)
 
 
 @app.route('/delete', methods=['GET', 'POST'])
 def delete():
-    insert_form = InsertForm()
-    select_form = SelectForm()
-    update_form = UpdateForm()
     delete_form = DeleteForm()
 
     if delete_form.submit.data and delete_form.validate():
         statement = str2hex(delete_form.delete_statement())
         tx_hash(statement)
-        print("delete")
+        flash("Deleted data.", 'success')
+    # else:
+    #     flash("Error.", 'error')
 
-    return render_template('addinput.html', insert_form=insert_form, select_form=select_form, update_form=update_form, delete_form=delete_form)
+    return render_template('delete.html', delete_form=delete_form)

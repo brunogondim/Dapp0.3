@@ -17,17 +17,17 @@ class InsertForm(FlaskForm):
         data = []
         for field in form:
             data.append(str(field.data))
-        statement = f"INSERT INTO Medical VALUES ({str(data[1:-2])[1:-1]})"
+        statement = f"INSERT INTO Medical VALUES ({str(data[:-2])[1:-1]})"
         return str(statement)
 
 
 class SelectForm(FlaskForm):    
     age = IntegerField("age", validators=[NumberRange(min=0, max=100)])
-    sex = SelectField("sex", choices=["Male", "Female"])
+    sex = SelectField("sex", choices=["-", "Male", "Female"])
     bmi = DecimalField("bmi", validators=[NumberRange(min=0, max=100)])
     children = IntegerField("children")
-    smoker = SelectField("smoker", choices=["Yes", "No"])
-    region = SelectField("region", choices=["Northeast", "Northwest", "Southeast", "Southwest"])
+    smoker = SelectField("smoker", choices=["-", "Yes", "No"])
+    region = SelectField("region", choices=["-", "Northeast", "Northwest", "Southeast", "Southwest"])
     charges = DecimalField("charges")
 
     submit = SubmitField("Submit")
@@ -35,14 +35,20 @@ class SelectForm(FlaskForm):
     def select_statement(form):
         statement = "SELECT * FROM Medical WHERE " 
         data = []
+        if form.sex.data == "-":
+            form.sex.data = None
+        if form.smoker.data == "-":
+            form.smoker.data = None
+        if form.region.data == "-":
+            form.region.data = None
         for field in form:
             if field.data:
                 data_field = (field.name, str(field.data).lower())
                 data.append(data_field)
-        data = data[1:-2]
+        data = data[:-2]
         for d in data:
             statement += d[0] + "=" + d[1] + " AND "
-        statement = statement[0:-4]
+        statement = statement[0:-5]
         return str(statement)
 
 
@@ -51,7 +57,7 @@ class UpdateForm(FlaskForm):
     new_value = StringField("New Value", validators=[DataRequired()])
     from_attribute = SelectField("From Attribute", choices=["Age", "Sex", "BMI", "Children", "Smoker", "Region", "Charges"], validators=[DataRequired()])
     from_value = StringField("From Value", validators=[DataRequired()])
-    condition_attribute = SelectField("Condition Attribute", choices=["Age", "Sex", "BMI", "Children", "Smoker", "Region", "Charges"])
+    condition_attribute = SelectField("Condition Attribute", choices=["----", "Age", "Sex", "BMI", "Children", "Smoker", "Region", "Charges"])
     condition_value = StringField("Condition Value")
     submit = SubmitField("Submit")
 
@@ -64,11 +70,11 @@ class UpdateForm(FlaskForm):
 
 class DeleteForm(FlaskForm):    
     age = IntegerField("Age", validators=[NumberRange(min=0, max=100)])
-    sex = SelectField("Sex", choices=["Male", "Female"])
+    sex = SelectField("Sex", choices=["----", "Male", "Female"])
     bmi = DecimalField("BMI", validators=[NumberRange(min=0, max=100)])
     children = IntegerField("Children")
-    smoker = SelectField("Smoker", choices=["Yes", "No"])
-    region = SelectField("Region", choices=["Northeast", "Northwest", "Southeast", "Southwest"])
+    smoker = SelectField("Smoker", choices=["----", "Yes", "No"])
+    region = SelectField("Region", choices=["----", "Northeast", "Northwest", "Southeast", "Southwest"])
     charges = DecimalField("Charges")
 
     submit = SubmitField("Submit")
@@ -81,7 +87,7 @@ class DeleteForm(FlaskForm):
             if field.data:
                 data_field = (field.name, str(field.data).lower())
                 data.append(data_field)
-        data = data[1:-2]
+        data = data[:-2]
         for d in data:
             statement += d[0] + "=" + d[1] + " AND "
         statement = statement[0:-4]
