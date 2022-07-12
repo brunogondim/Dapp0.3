@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cartesi DApp</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-5.1.3-dist/css/bootstrap.min.css') }}">
+</head>
+<body>
+  <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="/index">  SQLite DApp</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/insert">Data Management</a>
+          </li>
+        </ul>
+      </div> -->
+    </nav>
+  </div>
+
+  <div class="text-center">
+    <h3>Data Management</h3>
+  </div>
+  <div class="text-center">
+    <form class="form-check-inline" method="POST" action="/insert">
+        <div class="form-check form-check-inline">
+            <button class="btn-check" type="radio" id="insert" autocomplete="off" name="input_type" value="insert"></button>
+            <label class="btn btn-primary btn-sm" for="insert">New data</label> 
+        </div>
+    </form>
+    <form class="form-check-inline" method="POST" action="/select">
+        <div class="form-check form-check-inline">
+            <button class="btn-check" type="radio" id="select" autocomplete="off" name="input_type" value="select"></button>
+            <label class="btn btn-primary btn-sm" for="select">Search</label>
+        </div>
+    </form>
+    <form class="form-check-inline" method="POST" action="/update">
+        <div class="form-check form-check-inline">
+            <button class="btn-check" type="radio" id="update" autocomplete="off" name="input_type" value="update"></button>
+            <label class="btn btn-primary btn-sm" for="update">Update data</label>
+        </div>
+    </form>
+    <form class="form-check-inline" method="POST" action="/delete">
+        <div class="form-check form-check-inline">
+            <button class="btn-check" type="radio" id="del" autocomplete="off" name="input_type" value="del"></button>
+            <label class="btn btn-primary btn-sm" for="del">Delete data</label>
+        </div>
+    </form>
+  </div>
+
+  <div class="col-xs-12" style="height:30px;"></div>
+
+
+  {% with success = get_flashed_messages(category_filter=["success"]) %}
+  {% if success %}
+  <div class="alert alert-success">
+    <ul>
+      {%- for msg in success %}
+      <li>{{ msg }}</li>
+      {% endfor -%}
+    </ul>
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <!-- {% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+  <div class="alert alert-warning">
+    <ul>
+      {%- for msg in errors %}
+      <li>{{ msg }}</li>
+      {% endfor -%}
+    </ul>
+  </div>
+  {% endif %}
+  {% endwith %} -->
+
+
+  {% block content %}
+  {% endblock content %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='bootstrap-5.1.3-dist/js/bootstrap.min.js') }}"></script>
+</body>
+</html>
