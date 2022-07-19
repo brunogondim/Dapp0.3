@@ -109,5 +109,75 @@ class Myclass():
             response = requests.post(rollup_server + "/notice", json={"payload": payload})
             logger.info(f"Received notice status {response.status_code} body {response.content}")
 
+    def generate_model(self,data,rollup_server,hex2str,str2hex):
 
+        logger.info(f"Received advance request body {data}")
 
+        # retrieves SQL statement from input payload
+        statement = hex2str(data["payload"])
+        #statement = data["payload"]
+        logger.info(f"Received statement: '{statement}'")
+
+        # connects to internal database
+        con = sqlite3.connect("data.db")
+        cur = con.cursor()
+
+        result = None
+        status = "accept"
+        try:
+            if statement[16:] == "simulation":
+                # find a k factor that multiplied by age and smoker number gives the charge value
+                sql = 'SELECT SUM(charges/(age*n_smoker))/COUNT(*) '\
+                      'FROM (SELECT CAST(age as INT) as age, '\
+                                   'CASE WHEN smoker="yes" THEN 1.3 ELSE 1 END AS n_smoker, '\
+                                   'CAST(charges as DOUBLE) as charges, '\
+                                   'charges*(age*CASE WHEN smoker="yes" THEN 1.3 ELSE 1 END) as \'charges/(ageXsmoker)\' '\
+                                   'FROM Medical)'
+                cur.execute(sql)
+                k = cur.fetchall()
+
+            else:
+                cur.execute(statement)
+                result = cur.fetchall()
+
+        except Exception as e:
+            status = "reject"
+            msg = f"Error executing statement '{statement}': {e}"
+            logger.error(msg)
+            response = requests.post(rollup_server + "/report", json={"payload": str2hex(msg)})
+            logger.info(f"Received report status {response.status_code} body {response.content}")
+
+        finally:
+            # closes connection to database
+            con.commit()
+            con.close()
+
+        if (result):
+            # if there is a result, converts it to JSON and posts it as a notice
+            payloadJson = json.dumps(result)
+            payload = str2hex(payloadJson)
+            logger.info(payload)
+            logger.info(f"Adding notice with payload: {payloadJson}")
+            response = requests.post(rollup_server + "/notice", json={"payload": payload})
+            logger.info(f"Received notice status {response.status_code} body {response.content}")
+    
+    def generate_file(self,*args):
+
+        # model = (value1 * const1) + (value2 * const2) + ...
+        with open('datasets_model.py', 'w') as f:
+            f.write('class Model():\n' \
+                    '    def use_model(self,*args):\n' \
+                    '        result = '
+                    )
+            i=0
+            while i<len(args)-1:
+                f.write(args[i] + '*args['+i+'] + ')
+                i+=i
+            f.write(args[i] + '*args['+i+']\n')
+
+            f.write('        return result')
+            f.close()
+
+    def use_model(self,*args):
+        #call the method created in generate_file
+        pass

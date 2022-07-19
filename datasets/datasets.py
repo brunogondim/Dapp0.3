@@ -79,7 +79,12 @@ def handle_advance(data):
         #logger.info("Adding notice")
         #response = requests.post(rollup_server + "/notice", json={"payload": data["payload"]})
         #logger.info(f"Received notice status {response.status_code} body {response.content}")
-        my_class.advance(data,rollup_server,hex2str,str2hex)
+        
+        statement = hex2str(data["payload"])
+        if statement[0:15] == "generate_model":
+            pass
+        else:
+            my_class.advance(data,rollup_server,hex2str,str2hex)
 
     except Exception as e:
         status = "reject"
