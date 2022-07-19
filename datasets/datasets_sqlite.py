@@ -60,11 +60,13 @@
 # Can you accurately predict insurance costs?
 
 from asyncio.log import logger
+from optparse import Values
 from os import environ
 
 import requests
 import sqlite3
 import json
+import datasets_model
 
 class Myclass():
 
@@ -82,14 +84,12 @@ class Myclass():
         cur = con.cursor()
 
         result = None
-        status = "accept"
         try:
             # attempts to execute the statement and fetch any results
             cur.execute(statement)
             result = cur.fetchall()
 
         except Exception as e:
-            status = "reject"
             msg = f"Error executing statement '{statement}': {e}"
             logger.error(msg)
             response = requests.post(rollup_server + "/report", json={"payload": str2hex(msg)})
@@ -111,7 +111,7 @@ class Myclass():
 
     def generate_model(self,data,rollup_server,hex2str,str2hex):
 
-        logger.info(f"Received advance request body {data}")
+        logger.info(f"Received generate_model request body {data}")
 
         # retrieves SQL statement from input payload
         statement = hex2str(data["payload"])
@@ -123,9 +123,8 @@ class Myclass():
         cur = con.cursor()
 
         result = None
-        status = "accept"
         try:
-            if statement[16:] == "simulation":
+            if statement[15:] == "simulation":
                 # find a k factor that multiplied by age and smoker number gives the charge value
                 sql = 'SELECT SUM(charges/(age*n_smoker))/COUNT(*) '\
                       'FROM (SELECT CAST(age as INT) as age, '\
@@ -136,12 +135,13 @@ class Myclass():
                 cur.execute(sql)
                 k = cur.fetchall()
 
+                self.generate_file(self,k)
+
             else:
                 cur.execute(statement)
                 result = cur.fetchall()
 
         except Exception as e:
-            status = "reject"
             msg = f"Error executing statement '{statement}': {e}"
             logger.error(msg)
             response = requests.post(rollup_server + "/report", json={"payload": str2hex(msg)})
@@ -169,15 +169,58 @@ class Myclass():
                     '    def use_model(self,*args):\n' \
                     '        result = '
                     )
-            i=0
+            i=1
             while i<len(args)-1:
                 f.write(args[i] + '*args['+i+'] + ')
                 i+=i
-            f.write(args[i] + '*args['+i+']\n')
+            f.write(str(args[i]) + '*args['+str(i)+']\n')
 
             f.write('        return result')
             f.close()
 
-    def use_model(self,*args):
-        #call the method created in generate_file
-        pass
+    def use_model(self,data,rollup_server,hex2str,str2hex,*args):
+        
+        logger.info(f"Received use_model request body {data}")
+
+        # retrieves SQL statement from input payload
+        statement = hex2str(data["payload"])
+        #statement = data["payload"]
+        logger.info(f"Received statement: '{statement}'")
+
+        result = None
+        try:
+            #call the method created in generate_file
+            values = args[2:]
+            if args[1] == "simulation":
+                value_1 = 1 if values[1]=='no' else 1.3
+                value_2 = int(values[0])
+                simulation_values_1 = value_1* value_2
+                result = datasets_model.Model().use_simulation(self,simulation_values_1)
+            else:
+                pass
+
+        except Exception as e:
+            msg = f"Error executing statement '{statement}': {e}"
+            logger.error(msg)
+            response = requests.post(rollup_server + "/report", json={"payload": str2hex(msg)})
+            logger.info(f"Received report status {response.status_code} body {response.content}")
+
+        # finally:
+        #     # closes connection to database
+        #     con.commit()
+        #     con.close()
+
+        if (result):
+            # if there is a result, converts it to JSON and posts it as a notice
+            payloadJson = json.dumps(result)
+            payload = str2hex(payloadJson)
+            logger.info(payload)
+            logger.info(f"Adding notice with payload: {payloadJson}")
+            response = requests.post(rollup_server + "/notice", json={"payload": payload})
+            logger.info(f"Received notice status {response.status_code} body {response.content}")
+
+
+
+
+        
+        

@@ -69,7 +69,8 @@ def handle_advance(data):
 
     """
     The sample code from the Echo DApp simply generates a notice with the payload of the
-    request and print some log messages.
+    request and print some lo
+    g messages.
     """
 
     logger.info(f"Received advance request data {data}")
@@ -81,8 +82,11 @@ def handle_advance(data):
         #logger.info(f"Received notice status {response.status_code} body {response.content}")
         
         statement = hex2str(data["payload"])
-        if statement[0:15] == "generate_model":
-            pass
+        if statement[0:14] == "generate_model": # 'generate_model;simulation'
+            my_class.generate_model(data,rollup_server,hex2str,str2hex)
+        if statement[0:9] == "use_model": #'use_model;simulation;50;yes' age;smoker
+            values = statement.split(';')
+            my_class.use_model(data,rollup_server,hex2str,str2hex,*values)
         else:
             my_class.advance(data,rollup_server,hex2str,str2hex)
 
