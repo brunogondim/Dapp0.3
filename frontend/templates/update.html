@@ -3,6 +3,12 @@
 
 {% block content %}
 
+<div class="text-center">
+    <h1>Update data</h1>
+</div>
+
+<div class="col-xs-12" style="height:30px;"></div>
+
 <div class="container" id="update_statement">
     <form method="POST" action="" id="upd_form">
         {{ update_form.csrf_token }}
@@ -36,34 +42,9 @@
                 </tr>
             </tbody>
         </table>
-        {{ update_form.submit (class="btn btn-primary btn-sm", form="upd_form", style="float: right;") }}
+        {{ update_form.submit (class="btn btn-primary btn-sm", form="upd_form", style="background-color: #1e6eb0; float:right;") }}
     </form>
 </div>
 
-<script type="text/javascript">
-    function ShowStatement() {
-        var insert = document.getElementById("insert");
-        var select = document.getElementById("select");
-        var update = document.getElementById("update");
-        var del = document.getElementById("del");
-
-        var insert_statement = document.getElementById("insert_statement");
-        var select_statement = document.getElementById("select_statement");
-        var update_statement = document.getElementById("update_statement");
-        var del_statement = document.getElementById("del_statement");
-
-        insert_statement.style.display = insert.checked ? "block" : "none";
-        select_statement.style.display = select.checked ? "block" : "none";
-        update_statement.style.display = update.checked ? "block" : "none";
-        del_statement.style.display = del.checked ? "block" : "none";
-    }
-
-    function SelectAll(source) {
-        checkboxes = document.getElementsByName('select_checkbox');
-        for(var i=0, n=checkboxes.length;i<n;i++) {
-            checkboxes[i].checked = source.checked;
-        }
-    }
-</script>
 
 {% endblock content %}

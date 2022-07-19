@@ -1,3 +1,5 @@
 __pycache__
 .env
 deployments
+commands_docker.txt
+node_modules/

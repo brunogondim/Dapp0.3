@@ -16,6 +16,7 @@ import traceback
 import logging
 import requests
 import datasets_sqlite
+import json
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -92,10 +93,58 @@ def handle_advance(data):
 
 def handle_inspect(data):
     logger.info(f"Received inspect request data {data}")
-    logger.info("Adding report")
-    response = requests.post(rollup_server + "/report", json={"payload": data["payload"]})
-    logger.info(f"Received report status {response.status_code}")
-    return "accept"
+    try:
+        # retrieves SQL statement from input payload
+        statement = hex2str(data["payload"])
+        logger.info(f"Received statement: '{statement}'")
+
+        # connects to internal database
+        try:
+            con = sqlite3.connect("data.db")
+            cur = con.cursor()
+        except Exception as e:
+            # critical error if database is no longer accessible: DApp can no longer proceed
+            msg = f"Critical error connecting to database: {e}"
+            logger.error(msg)
+            requests.post(rollup_server + "/exception", json={"payload": str2hex(msg)})
+            sys.exit(1)
+
+        result = None
+        status = "accept"
+
+        try:
+            # attempts to execute the statement and fetch any results
+            cur.execute(statement)
+            result = cur.fetchall()
+
+        except Exception as e:
+            status = "reject"
+            msg = f"Error executing statement '{statement}': {e}"
+            logger.error(msg)
+            response = requests.post(rollup_server + "/report", json={"payload": str2hex(msg)})
+            logger.info(f"Received report status {response.status_code} body {response.content}")
+
+        finally:
+            # closes connection to database
+            con.commit()
+            con.close()
+        
+        if (result):
+            # if there is a result, converts it to JSON and posts it as a report
+            payloadJson = json.dumps(result)
+            payload = str2hex(payloadJson)
+            logger.info(f"Adding report with payload: {payloadJson}")
+            response = requests.post(rollup_server + "/report", json={"payload": payload})
+            logger.info(f"Received notice status {response.status_code}")
+    
+    except Exception as e:
+        status = "reject"
+        msg = f"Error processing data {data}\n{traceback.format_exc()}"
+        logger.error(msg)
+        response = requests.post(rollup_server + "/report", json={"payload": str2hex(msg)})
+        logger.info(f"Received report status {response.status_code} body {response.content}")
+
+    return status
 
 handlers = {
     "advance_state": handle_advance,
@@ -113,9 +162,10 @@ while True:
         logger.info("No pending rollup request, trying again")
     else:
         rollup_request = response.json()
-        metadata = rollup_request["data"]["metadata"]
-        if metadata["epoch_index"] == 0 and metadata["input_index"] == 0:
-            rollup_address = metadata["msg_sender"]
+        # metadata = rollup_request["data"]["metadata"]
+        # if metadata["epoch_index"] == 0 and metadata["input_index"] == 0:
+        if rollup_request["data"].get("metadata") and rollup_request["data"]["metadata"]["epoch_index"] == 0 and rollup_request["data"]["metadata"]["input_index"] == 0:
+            rollup_address = rollup_request["data"]["metadata"]["msg_sender"]
             logger.info(f"Captured rollup address: {rollup_address}")
         else:
             handler = handlers[rollup_request["request_type"]]

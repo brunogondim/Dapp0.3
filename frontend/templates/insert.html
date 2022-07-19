@@ -3,7 +3,13 @@
 
 {% block content %}
 
-<div class="container" id="insert_statement">
+<div class="text-center">
+    <h1>Insert data</h1>
+</div>
+
+<div class="col-xs-12" style="height:30px;"></div>
+
+<div class="container bg-gradient" id="insert_statement">
     <form method="POST" action="/insert">
         {{ insert_form.csrf_token }}
         <table class="table table-sm">
@@ -32,7 +38,7 @@
                 </tr>
             </tbody>
         </table>
-        {{ insert_form.submit (class="btn btn-primary btn-sm", style="float: right;") }}
+        {{ insert_form.submit (class="btn btn-primary btn-sm", onclick='addinput()', style="background-color: #1e6eb0; float:right;") }}
     </form>
 </div>
 

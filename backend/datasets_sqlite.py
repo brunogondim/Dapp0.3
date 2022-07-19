@@ -85,6 +85,7 @@ class Myclass():
         status = "accept"
         try:
             # attempts to execute the statement and fetch any results
+            cur.execute("CREATE TABLE IF NOT EXISTS Medical (age TEXT, sex TEXT, bmi TEXT, children TEXT, smoker TEXT, region TEXT, charges TEXT)")
             cur.execute(statement)
             result = cur.fetchall()
 

@@ -3,6 +3,12 @@
 
 {% block content %}
 
+<div class="text-center">
+    <h1>Delete data</h1>
+</div>
+
+<div class="col-xs-12" style="height:30px;"></div>
+
 <div class="container" id="del_statement">
     <form method="POST" action="" id="del_form">
         {{ delete_form.csrf_token }}
@@ -32,7 +38,7 @@
                 </tr>
             </tbody>
         </table>
-        {{ delete_form.submit (class="btn btn-primary btn-sm", form="del_form", style="float: right;") }}
+        {{ delete_form.submit (class="btn btn-primary btn-sm", form="del_form", style="background-color: #1e6eb0; float:right;") }}
     </form>
 </div>
 

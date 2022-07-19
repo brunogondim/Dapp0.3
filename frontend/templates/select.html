@@ -3,6 +3,12 @@
 
 {% block content %}
 
+<div class="text-center">
+    <h1>Search data</h1>
+</div>
+
+<div class="col-xs-12" style="height:30px;"></div>
+
 <div class="container" id="select_statement">
     <form method="POST" action="" id="sel_form">
         {{ select_form.csrf_token }}
@@ -32,7 +38,7 @@
                 </tr>
             </tbody>
         </table>
-        {{ select_form.submit (class="btn btn-primary btn-sm", form="sel_form", style="float: right;") }}
+        {{ select_form.submit (class="btn btn-primary btn-sm", form="sel_form", style="background-color: #1e6eb0; float:right;") }}
     </form>
 </div>
 
@@ -40,6 +46,11 @@
 
 {% if payload_list != [] %}
 <div class="container" id="select_table">
+    <div class="text-center">
+        <h3>Search Result</h3>
+    </div>
+    <div class="col-xs-12" style="height:15px;"></div>
+
         <table class="table table-sm">
             <thead class="thead-light">
                 <tr align="center">

@@ -1,7 +1,15 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, DecimalField, RadioField, BooleanField, SubmitField, SelectField
 from wtforms.validators import DataRequired, NumberRange
+import requests
+import json
 
+
+def hex2str(hex):
+    return bytes.fromhex(hex[2:]).decode("utf-8")
+
+def str2hex(str):
+    return "0x" + str.encode("utf-8").hex()
 
 class InsertForm(FlaskForm):
     age = IntegerField("Age", validators=[DataRequired(), NumberRange(min=0, max=100)])
@@ -51,13 +59,21 @@ class SelectForm(FlaskForm):
         statement = statement[0:-5]
         return str(statement)
 
+    def inspect(form, statement):
+        hex_input = str2hex(statement)
+        report = requests.get(f"http://localhost:5002/inspect/{hex_input}")
+        payload = hex2str(report.json()["reports"][0]["payload"])
+        payload = json.loads(payload)
+        print(payload)
+        return payload
+
 
 class UpdateForm(FlaskForm):
     attribute = SelectField("Attribute", choices=["Age", "Sex", "BMI", "Children", "Smoker", "Region", "Charges"], validators=[DataRequired()])
     new_value = StringField("New Value", validators=[DataRequired()])
     from_attribute = SelectField("From Attribute", choices=["Age", "Sex", "BMI", "Children", "Smoker", "Region", "Charges"], validators=[DataRequired()])
     from_value = StringField("From Value", validators=[DataRequired()])
-    condition_attribute = SelectField("Condition Attribute", choices=["----", "Age", "Sex", "BMI", "Children", "Smoker", "Region", "Charges"])
+    condition_attribute = SelectField("Condition Attribute", choices=["-", "Age", "Sex", "BMI", "Children", "Smoker", "Region", "Charges"])
     condition_value = StringField("Condition Value")
     submit = SubmitField("Submit")
 
@@ -73,8 +89,8 @@ class DeleteForm(FlaskForm):
     sex = SelectField("Sex", choices=["----", "Male", "Female"])
     bmi = DecimalField("BMI", validators=[NumberRange(min=0, max=100)])
     children = IntegerField("Children")
-    smoker = SelectField("Smoker", choices=["----", "Yes", "No"])
-    region = SelectField("Region", choices=["----", "Northeast", "Northwest", "Southeast", "Southwest"])
+    smoker = SelectField("Smoker", choices=["-", "Yes", "No"])
+    region = SelectField("Region", choices=["-", "Northeast", "Northwest", "Southeast", "Southwest"])
     charges = DecimalField("Charges")
 
     submit = SubmitField("Submit")

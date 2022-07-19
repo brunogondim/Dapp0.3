@@ -3,7 +3,7 @@ import time
 from flask import Flask, render_template, request, redirect, flash
 from models.forms import InsertForm, SelectForm, UpdateForm, DeleteForm
 from controllers.addinput import tx_hash
-from controllers.notice import notice
+from controllers.query import inspect
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secretkey"
@@ -26,8 +26,8 @@ def insert():
     insert_form = InsertForm()
 
     if insert_form.validate_on_submit():
-        statement = str2hex(insert_form.insert_statement())
-        tx_hash(statement)
+        # statement = str2hex(insert_form.insert_statement())
+        # tx_hash(statement)
         flash("Added data.", 'success')
     # else:
     #     flash("Error.", 'error')
@@ -40,12 +40,7 @@ def select():
     payload_list = []
 
     if select_form.submit.data:
-        print(select_form.select_statement())
-        statement = str2hex(select_form.select_statement())
-        tx_hash(statement)
-        flash("Selected data.", 'success')
-        time.sleep(8)
-        payload_list = notice('0')
+        payload_list = select_form.inspect(select_form.select_statement())
 
     return render_template('select.html', select_form=select_form, payload_list=payload_list)
 
