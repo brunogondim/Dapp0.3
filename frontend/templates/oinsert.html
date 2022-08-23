@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="container bg-gradient" id="insert_statement">
+                <form method="POST" action="">
+                    {{ insert_form.csrf_token }}
+                    <table class="table table-sm">
+                        <thead class="thead-light">
+                            <tr align="center">
+                                <th scope="col">&nbsp;</th>
+                                <th scope="col">Age</th>
+                                <th scope="col">Sex</th>
+                                <th scope="col">BMI</th>
+                                <th scope="col">Number of children</th>
+                                <th scope="col">Is a smoker?</th>
+                                <th scope="col">Region</th>
+                                <th scope="col">Charges</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr align="center">
+                                <th scope="row">Insert data:</th>
+                                <td>{{ insert_form.age (class="form-control form-control-sm") }}</td>
+                                <td>{{ insert_form.sex (class="form-control form-control-sm") }}</td>
+                                <td>{{ insert_form.bmi (class="form-control form-control-sm") }}</td>
+                                <td>{{ insert_form.children (class="form-control form-control-sm") }}</td>
+                                <td>{{ insert_form.smoker (class="form-control form-control-sm") }}</td>
+                                <td>{{ insert_form.region (class="form-control form-control-sm") }}</td>
+                                <td>{{ insert_form.charges (class="form-control form-control-sm") }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button class="btn btn-primary btn-sm", onclick="input_statement();", style="background-color: #1e6eb0; float:right;">Submit</button>
+                </form>
+            </div>
+        </div>
+        <div class="col">
+            kkk eae man
+        </div>
+    </div>
+
+<!-- <div class="text-center">
+    <h1>Insert data</h1>
+</div> -->
+
+<!-- <div class="col-xs-12" style="height:30px;"></div> -->
+
+<!-- <div class="container bg-gradient" id="insert_statement">
+    <form method="POST" action="">
+        {{ insert_form.csrf_token }}
+        <table class="table table-sm">
+            <thead class="thead-light">
+                <tr align="center">
+                    <th scope="col">&nbsp;</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Sex</th>
+                    <th scope="col">BMI</th>
+                    <th scope="col">Number of children</th>
+                    <th scope="col">Is a smoker?</th>
+                    <th scope="col">Region</th>
+                    <th scope="col">Charges</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr align="center">
+                    <th scope="row">Insert data:</th>
+                    <td>{{ insert_form.age (class="form-control form-control-sm") }}</td>
+                    <td>{{ insert_form.sex (class="form-control form-control-sm") }}</td>
+                    <td>{{ insert_form.bmi (class="form-control form-control-sm") }}</td>
+                    <td>{{ insert_form.children (class="form-control form-control-sm") }}</td>
+                    <td>{{ insert_form.smoker (class="form-control form-control-sm") }}</td>
+                    <td>{{ insert_form.region (class="form-control form-control-sm") }}</td>
+                    <td>{{ insert_form.charges (class="form-control form-control-sm") }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn btn-primary btn-sm", onclick="input_statement();", style="background-color: #1e6eb0; float:right;">Submit</button>
+    </form>
+</div> -->
+</div>
+
+{% if statement != '' %}
+<div id="statement_result" style="opacity:0;">
+    {{ statement }}
+</div>
+<div id="contract_address" style="opacity:0;">
+    {{ rollups_address }}
+</div>
+<div id="contract_abi" style="opacity:0;">
+    {{ input_abi }}
+</div>
+{% endif %}
+
+
+{% endblock content %}

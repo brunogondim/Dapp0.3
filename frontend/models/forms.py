@@ -26,7 +26,19 @@ class InsertForm(FlaskForm):
         for field in form:
             data.append(str(field.data).lower())
         statement = f"INSERT INTO Medical VALUES ({str(data[:-2])[1:-1]})"
+        print(str(statement))
         return str(statement)
+    
+    def inspect(form, statement):
+        hex_input = str2hex(statement)
+        report = requests.get(f"http://localhost:5002/inspect/{hex_input}")
+        report = hex2str(report.json()["reports"])
+        print(f"Report: {report}")
+        # payload = hex2str(report.json()["reports"][0]["payload"])
+        # payload = json.loads(payload)
+        # print(payload)
+        # return payload
+        return None
 
 
 class SelectForm(FlaskForm):    
@@ -62,9 +74,12 @@ class SelectForm(FlaskForm):
     def inspect(form, statement):
         hex_input = str2hex(statement)
         report = requests.get(f"http://localhost:5002/inspect/{hex_input}")
-        payload = hex2str(report.json()["reports"][0]["payload"])
-        payload = json.loads(payload)
-        print(payload)
+        if(report.json()["reports"] != []):
+            payload = hex2str(report.json()["reports"][0]["payload"])
+            payload = json.loads(payload)
+        else:
+            payload = []
+        print(f"Payload: {payload}")
         return payload
 
 

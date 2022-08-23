@@ -1,8 +1,8 @@
 import logging
 import time
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, url_for
 from models.forms import InsertForm, SelectForm, UpdateForm, DeleteForm
-from controllers.addinput import tx_hash
+from controllers.config import getAddress, getABI
 from controllers.query import inspect
 
 app = Flask(__name__)
@@ -24,23 +24,25 @@ def index():
 @app.route('/insert', methods=['GET', 'POST'])
 def insert():
     insert_form = InsertForm()
-
+    statement = ''
+    rollups_address = getAddress()
+    input_abi = getABI()
+    
     if insert_form.validate_on_submit():
-        # statement = str2hex(insert_form.insert_statement())
-        # tx_hash(statement)
-        flash("Added data.", 'success')
-    # else:
-    #     flash("Error.", 'error')
+        statement = str2hex(insert_form.insert_statement())
+        print(statement)
 
-    return render_template('insert.html', insert_form=insert_form)
+    return render_template('insert.html', insert_form=insert_form, statement=statement, rollups_address=rollups_address, input_abi=input_abi)
 
 @app.route('/select', methods=['GET', 'POST'])
 def select():
     select_form = SelectForm()
-    payload_list = []
+    payload_list = None
 
     if select_form.submit.data:
         payload_list = select_form.inspect(select_form.select_statement())
+        if(payload_list == []):
+            payload_list = "NOTFOUND"
 
     return render_template('select.html', select_form=select_form, payload_list=payload_list)
 
@@ -50,11 +52,7 @@ def update():
     update_form = UpdateForm()
 
     if update_form.submit.data and update_form.validate():
-        statement = str2hex(update_form.update_statement())
-        tx_hash(statement)
         flash("Updated data", 'success')
-    # else:
-    #     flash("Error.", 'error')
 
     return render_template('update.html', update_form=update_form)
 
@@ -65,9 +63,6 @@ def delete():
 
     if delete_form.submit.data and delete_form.validate():
         statement = str2hex(delete_form.delete_statement())
-        tx_hash(statement)
         flash("Deleted data.", 'success')
-    # else:
-    #     flash("Error.", 'error')
 
     return render_template('delete.html', delete_form=delete_form)

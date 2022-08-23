@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="text-center">
+    <h1>Search data</h1>
+</div>
+
+<div class="col-xs-12" style="height:30px;"></div>
+
+<div class="container" id="select_statement">
+    <form method="POST" action="" id="sel_form">
+        {{ select_form.csrf_token }}
+        <table class="table table-sm">
+            <thead class="thead-light">
+                <tr align="center">
+                    <th scope="col">&nbsp;</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Sex</th>
+                    <th scope="col">BMI</th>
+                    <th scope="col">Number of children</th>
+                    <th scope="col">Is a smoker?</th>
+                    <th scope="col">Region</th>
+                    <th scope="col">Charges</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr align="center">
+                    <th scope="row">Filter by:</th>
+                    <td>{{ select_form.age (class="form-control form-control-sm") }}</td>
+                    <td>{{ select_form.sex (class="form-control form-control-sm") }}</td>
+                    <td>{{ select_form.bmi (class="form-control form-control-sm") }}</td>
+                    <td>{{ select_form.children (class="form-control form-control-sm") }}</td>
+                    <td>{{ select_form.smoker (class="form-control form-control-sm") }}</td>
+                    <td>{{ select_form.region (class="form-control form-control-sm") }}</td>
+                    <td>{{ select_form.charges (class="form-control form-control-sm") }}</td>
+                </tr>
+            </tbody>
+        </table>
+        {{ select_form.submit (class="btn btn-primary btn-sm", form="sel_form", style="background-color: #1e6eb0; float:right;") }}
+    </form>
+</div>
+
+<div class="col-xs-12" style="height:60px;"></div>
+
+{% if payload_list != [] %}
+<div class="container" id="select_table">
+    <div class="text-center">
+        <h3>Search Result</h3>
+    </div>
+    <div class="col-xs-12" style="height:15px;"></div>
+
+        <table class="table table-sm">
+            <thead class="thead-light">
+                <tr align="center">
+                    <th scope="col">Age</th>
+                    <th scope="col">Sex</th>
+                    <th scope="col">BMI</th>
+                    <th scope="col">Number of children</th>
+                    <th scope="col">Is a smoker?</th>
+                    <th scope="col">Region</th>
+                    <th scope="col">Charges</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%- for p in payload_list %}
+                <tr align="center">
+                    <td>{{ p[0] }}</td>
+                    <td>{{ p[1] }}</td>
+                    <td>{{ p[2] }}</td>
+                    <td>{{ p[3] }}</td>
+                    <td>{{ p[4] }}</td>
+                    <td>{{ p[5] }}</td>
+                    <td>{{ p[6] }}</td>
+                </tr>
+                {% endfor -%}
+            </tbody>
+        </table>
+    </form>
+</div>
+{% endif %}
+
+<script type="text/javascript">
+    function ShowStatement() {
+        var insert = document.getElementById("insert");
+        var select = document.getElementById("select");
+        var update = document.getElementById("update");
+        var del = document.getElementById("del");
+
+        var insert_statement = document.getElementById("insert_statement");
+        var select_statement = document.getElementById("select_statement");
+        var update_statement = document.getElementById("update_statement");
+        var del_statement = document.getElementById("del_statement");
+
+        insert_statement.style.display = insert.checked ? "block" : "none";
+        select_statement.style.display = select.checked ? "block" : "none";
+        update_statement.style.display = update.checked ? "block" : "none";
+        del_statement.style.display = del.checked ? "block" : "none";
+    }
+
+    function SelectAll(source) {
+        checkboxes = document.getElementsByName('select_checkbox');
+        for(var i=0, n=checkboxes.length;i<n;i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
+</script>
+
+{% endblock content %}

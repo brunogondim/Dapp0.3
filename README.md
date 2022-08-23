@@ -1,6 +1,6 @@
-# datasets DApp
+# Datasets DApp
 
-datasets is a customized DApp written in Python, which originally resembles the one provided by the sample [Echo Python DApp](https://github.com/cartesi/rollups-examples/tree/main/echo-python).
+Datasets is a customized DApp written in Python, which originally resembles the one provided by the sample [Echo Python DApp](https://github.com/cartesi/rollups-examples/tree/main/echo-python).
 
 The documentation below reflects the original application code, and should also be used as a basis for documenting any DApp created with this mechanism.
 
@@ -18,16 +18,44 @@ docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl --load
 
 ## Running
 
-To start the application, execute the following command:
+### Back-end
+
+#### Host Mode
 
 ```shell
-docker compose up
+docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml -f ./docker-compose-host.yml up
+```
+
+```shell
+ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004" python3 datasets.py
+```
+
+```shell
+ls *.py | ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004" entr -r python3 datasets.py
 ```
 
 The application can afterwards be shut down with the following command:
+```shell
+docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml -f ./docker-compose-host.yml down -v
+```
+
+#### Production Mode
 
 ```shell
-docker compose down -v
+docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml up
+```
+
+```shell
+docker-compose -f ./docker-compose.yml -f ./docker-compose.override.yml down -v
+```
+
+### Front-end
+```shell
+cd frontend
+python3 -m venv .env
+. .env/bin/activate
+pip install -r requirements.txt
+FLASK_APP=front.py flask run
 ```
 
 ## Interacting with the application

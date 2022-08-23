@@ -7,6 +7,34 @@
     <title>Cartesi DApp</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-5.1.3-dist/css/bootstrap.min.css') }}">
     <script src="../static/node_modules/web3/dist/web3.min.js"></script>
+    <style type="text/css">
+      .navbar .navbar-nav .nav-link {
+        color: #ffffff;
+        font-size: 1.1em;
+      }
+      .navbar .navbar-nav .nav-link:hover {
+        color: #ffffff;
+      }
+      .navbar .navbar-nav .nav-item {
+        position: relative;
+      }
+      .navbar .navbar-nav .nav-item::after {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        background-color: #ffffff;
+        width: 0%;
+        content: "";
+        height: 4px;
+        transition: all 0.5s;
+      }
+      
+      .navbar .navbar-nav .nav-item:hover::after {
+        width: 100%;
+      }
+    </style>
 </head>
 <body>
   <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #1c649e;">
@@ -71,15 +99,18 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='bootstrap-5.1.3-dist/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript">
-      var provider = window.ethereum
-      var metamaskButton = document.getElementById('metamaskButton')
+      const provider = window.ethereum
+      const web3 = new Web3(provider);
+      const metamaskButton = document.getElementById('metamaskButton')
 
       async function run(){
         if (!provider){
           metamaskButton.innerText = "Install Metamask"
+          metamaskButton.addEventListener('click', install)
         }
         else{
           let accounts = await provider.request({method: 'eth_accounts'})
+          console.log(accounts)
           if (accounts.length == 0){
             metamaskButton.innerText = "Connect to Metamask"
             metamaskButton.addEventListener('click', connect)
@@ -90,23 +121,89 @@
         }
       }
 
-      async function connect(){
-        const accounts = await provider.request({method: 'eth_requestAccounts'})
-        metamaskButton.innerText = accounts[0]
-        metamaskButton.removeEventListener('click', connect)
+      function install(){
+        let metamask_url = "https://metamask.io"
+        window.open(metamask_url, '_blank');
       }
 
-      run();
+      async function connect(){
+        let accounts = await provider.request({method: 'eth_requestAccounts'})
+        metamaskButton.innerText = accounts[0]
+      }
 
-      // async function addinput(){
-      //   const web3 = await new Web3(window.ethereum);
-      //   let accounts = await web3.eth.getAccounts();
-      //   user_account = accounts[0]
-      //   console.log(user_account)
-      //   let input_contract = await new web3.eth.Contract(input_file.abi, rollups_address)
-      //   let receipt = await input_contract.methods.addInput().send({from: user_account})
-      // }
+      function getStatement(){
+        return new Promise((resolve, reject) => {
+          let statement = document.getElementById('statement_result').innerText
+          if (statement){
+            console.log(statement)
+            resolve(statement)
+          }
+          else{
+            reject('Error to get statement.')
+          }
+        })
+      }
 
-    </script>
+      function getAddress(){
+        return new Promise((resolve, reject) => {
+          let contract_address = document.getElementById('contract_address').innerText
+          if (contract_address){
+            console.log(contract_address)
+            resolve(contract_address)
+          }
+          else{
+            reject('Error to get address.')
+          }
+        })
+      }
+
+      function getABI(){
+        return new Promise((resolve, reject) => {
+          let contract_abi = document.getElementById('contract_abi').innerText
+          if (contract_abi){
+            contract_abi = JSON.parse(contract_abi)
+            console.log(contract_abi)
+            resolve(contract_abi)
+          }
+          else{
+            reject('Error to get ABI.')
+          }
+        }) 
+      }
+
+      function getUserAccount(){
+        return new Promise((resolve, reject) => {
+          let accounts = provider.request({method: 'eth_accounts'})
+          console.log(accounts)
+          if (accounts.length != 0){
+            let user_account = accounts[0]
+            console.log(user_account)
+            resolve(user_account)
+          }
+          else{
+            reject('Error to get user account.')
+          }
+        }) 
+      }
+
+      async function input_statement(){
+        try{
+          let accounts = await provider.request({method: 'eth_accounts'})
+          let input_abi = await getABI()
+          let rollups_address = await getAddress()
+          let input_contract = await new web3.eth.Contract(input_abi, rollups_address)
+          let statement = await getStatement()
+          // statement = web3.utils.hexToBytes(statement)
+          let receipt = await input_contract.methods.addInput(statement).send({from:accounts[0]})
+          console.log(receipt)
+        } catch(err){
+          console.log('ERROR', err)
+        }
+        
+      }
+
+      run()
+      // input_statement()
+    </script>  
 </body>
 </html>

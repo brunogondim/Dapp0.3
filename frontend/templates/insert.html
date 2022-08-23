@@ -3,69 +3,107 @@
 
 {% block content %}
 
-<div class="text-center">
-    <h1>Insert data</h1>
+<div class="container">
+    <div class="row">
+        <div class="col" id="insert_statement">
+            <div class="container" style="background-color: #d4e3eef3;">
+            <h6>Insert data</h6>
+            <form method="POST" action="">
+                {{ insert_form.csrf_token }}
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="insertAge">Age</label>
+                        {{ insert_form.age (class="form-control", id="insertAge") }}
+                    </div>
+                    <div class="form-group col">
+                        <label for="insertSex">Sex</label>
+                        {{ insert_form.sex (class="form-select", id="insertSex") }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="insertBMI">BMI</label>
+                        {{ insert_form.bmi (class="form-control", id="insertBMI") }}
+                    </div>
+                    <div class="form-group col">
+                        <label for="insertSmoker">Is a smoker?</label>
+                        {{ insert_form.smoker (class="form-select", id="insertSmoker") }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="insertChildren">Number of children</label>
+                        {{ insert_form.children (class="form-control", id="insertChildren") }}
+                    </div>
+                    <div class="form-group col">
+                        <label for="insertRegion">Region</label>
+                        {{ insert_form.region (class="form-select", id="insertRegion") }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="insertCharges">Charges</label>
+                        {{ insert_form.charges (class="form-control", id="insertCharges") }}
+                    </div>
+                </div>
+                <div class="col-xs-12" style="height:10px;"></div>
+                <div class="row">
+                    <div class="form-group col text-center">
+                        <button class="btn btn-primary btn-sm", onclick="input_statement();", style="background-color: #1e6eb0;">Submit</button>
+                    </div>
+                </div>
+            </form>
+            </div>
+        </div>
+        <div class="col-8">
+            {% if payload_list != [] %}
+            <div class="container" style="background-color: #d4e3eef3;" id="select_table">
+                <h6>Inserted Data</h6>
+                    <table class="table table-sm table-striped">
+                        <thead class="thead-light">
+                            <tr align="center">
+                                <th scope="col">Age</th>
+                                <th scope="col">Sex</th>
+                                <th scope="col">BMI</th>
+                                <th scope="col">Number of children</th>
+                                <th scope="col">Is a smoker?</th>
+                                <th scope="col">Region</th>
+                                <th scope="col">Charges</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%- for p in payload_list %}
+                            <tr align="center">
+                                <td>{{ p[0] }}</td>
+                                <td>{{ p[1] }}</td>
+                                <td>{{ p[2] }}</td>
+                                <td>{{ p[3] }}</td>
+                                <td>{{ p[4] }}</td>
+                                <td>{{ p[5] }}</td>
+                                <td>{{ p[6] }}</td>
+                            </tr>
+                            {% endfor -%}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
-<div class="col-xs-12" style="height:30px;"></div>
 
-<div class="container bg-gradient" id="insert_statement">
-    <form method="POST" action="/insert">
-        {{ insert_form.csrf_token }}
-        <table class="table table-sm">
-            <thead class="thead-light">
-                <tr align="center">
-                    <th scope="col">&nbsp;</th>
-                    <th scope="col">Age</th>
-                    <th scope="col">Sex</th>
-                    <th scope="col">BMI</th>
-                    <th scope="col">Number of children</th>
-                    <th scope="col">Is a smoker?</th>
-                    <th scope="col">Region</th>
-                    <th scope="col">Charges</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr align="center">
-                    <th scope="row">Insert data:</th>
-                    <td>{{ insert_form.age (class="form-control form-control-sm") }}</td>
-                    <td>{{ insert_form.sex (class="form-control form-control-sm") }}</td>
-                    <td>{{ insert_form.bmi (class="form-control form-control-sm") }}</td>
-                    <td>{{ insert_form.children (class="form-control form-control-sm") }}</td>
-                    <td>{{ insert_form.smoker (class="form-control form-control-sm") }}</td>
-                    <td>{{ insert_form.region (class="form-control form-control-sm") }}</td>
-                    <td>{{ insert_form.charges (class="form-control form-control-sm") }}</td>
-                </tr>
-            </tbody>
-        </table>
-        {{ insert_form.submit (class="btn btn-primary btn-sm", onclick='addinput()', style="background-color: #1e6eb0; float:right;") }}
-    </form>
+{% if statement != '' %}
+<div id="statement_result" style="opacity:0;">
+    {{ statement }}
 </div>
+<div id="contract_address" style="opacity:0;">
+    {{ rollups_address }}
+</div>
+<div id="contract_abi" style="opacity:0;">
+    {{ input_abi }}
+</div>
+{% endif %}
 
-<script type="text/javascript">
-    function ShowStatement() {
-        var insert = document.getElementById("insert");
-        var select = document.getElementById("select");
-        var update = document.getElementById("update");
-        var del = document.getElementById("del");
-
-        var insert_statement = document.getElementById("insert_statement");
-        var select_statement = document.getElementById("select_statement");
-        var update_statement = document.getElementById("update_statement");
-        var del_statement = document.getElementById("del_statement");
-
-        insert_statement.style.display = insert.checked ? "block" : "none";
-        select_statement.style.display = select.checked ? "block" : "none";
-        update_statement.style.display = update.checked ? "block" : "none";
-        del_statement.style.display = del.checked ? "block" : "none";
-    }
-
-    function SelectAll(source) {
-        checkboxes = document.getElementsByName('select_checkbox');
-        for(var i=0, n=checkboxes.length;i<n;i++) {
-            checkboxes[i].checked = source.checked;
-        }
-    }
-</script>
 
 {% endblock content %}

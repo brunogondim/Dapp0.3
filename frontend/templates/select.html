@@ -3,108 +3,164 @@
 
 {% block content %}
 
-<div class="text-center">
-    <h1>Search data</h1>
-</div>
-
-<div class="col-xs-12" style="height:30px;"></div>
-
-<div class="container" id="select_statement">
-    <form method="POST" action="" id="sel_form">
-        {{ select_form.csrf_token }}
-        <table class="table table-sm">
-            <thead class="thead-light">
-                <tr align="center">
-                    <th scope="col">&nbsp;</th>
-                    <th scope="col">Age</th>
-                    <th scope="col">Sex</th>
-                    <th scope="col">BMI</th>
-                    <th scope="col">Number of children</th>
-                    <th scope="col">Is a smoker?</th>
-                    <th scope="col">Region</th>
-                    <th scope="col">Charges</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr align="center">
-                    <th scope="row">Filter by:</th>
-                    <td>{{ select_form.age (class="form-control form-control-sm") }}</td>
-                    <td>{{ select_form.sex (class="form-control form-control-sm") }}</td>
-                    <td>{{ select_form.bmi (class="form-control form-control-sm") }}</td>
-                    <td>{{ select_form.children (class="form-control form-control-sm") }}</td>
-                    <td>{{ select_form.smoker (class="form-control form-control-sm") }}</td>
-                    <td>{{ select_form.region (class="form-control form-control-sm") }}</td>
-                    <td>{{ select_form.charges (class="form-control form-control-sm") }}</td>
-                </tr>
-            </tbody>
-        </table>
-        {{ select_form.submit (class="btn btn-primary btn-sm", form="sel_form", style="background-color: #1e6eb0; float:right;") }}
-    </form>
-</div>
-
-<div class="col-xs-12" style="height:60px;"></div>
-
-{% if payload_list != [] %}
-<div class="container" id="select_table">
-    <div class="text-center">
-        <h3>Search Result</h3>
+<div class="container">
+    <div class="row">
+        <div class="col" id="select_statement">
+            <div class="container" style="background-color: #d4e3eef3;">
+            <h6>Filter by</h6>
+            <form method="POST" action="" id="sel_form">
+                {{ select_form.csrf_token }}
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="selectAge">Age</label>
+                        {{ select_form.age (class="form-control", id="selectAge") }}
+                    </div>
+                    <div class="form-group col">
+                        <label for="selectSex">Sex</label>
+                        {{ select_form.sex (class="form-select", id="selectSex") }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="selectBMI">BMI</label>
+                        {{ select_form.bmi (class="form-control", id="selectBMI") }}
+                    </div>
+                    <div class="form-group col">
+                        <label for="selectSmoker">Is a smoker?</label>
+                        {{ select_form.smoker (class="form-select", id="selectSmoker") }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="selectChildren">Number of children</label>
+                        {{ select_form.children (class="form-control", id="selectChildren") }}
+                    </div>
+                    <div class="form-group col">
+                        <label for="selectRegion">Region</label>
+                        {{ select_form.region (class="form-select", id="selectRegion") }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="selectCharges">Charges</label>
+                        {{ select_form.charges (class="form-control", id="selectCharges") }}
+                    </div>
+                </div>
+                <div class="col-xs-12" style="height:10px;"></div>
+                <div class="row">
+                    <div class="form-group col text-center">
+                        {{ select_form.submit (class="btn btn-primary btn-sm", onclick="pagination()", form="sel_form", style="background-color: #1e6eb0;") }}
+                    </div>
+                </div>
+            </form>
+            </div>
+        </div>
+        <div class="col-8">
+            {% if payload_list != None %}
+            <div class="container" style="background-color: #d4e3eef3;" id="select_table">
+                <h6>Search Result</h6>
+                    {% if payload_list == "NOTFOUND" %}
+                    Not found
+                    {% else %}
+                    <table class="table table-sm table-striped" id="select_table">
+                        <thead class="thead-light">
+                            <tr align="center">
+                                <th scope="col">Age</th>
+                                <th scope="col">Sex</th>
+                                <th scope="col">BMI</th>
+                                <th scope="col">Number of children</th>
+                                <th scope="col">Is a smoker?</th>
+                                <th scope="col">Region</th>
+                                <th scope="col">Charges</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%- for p in payload_list %}
+                            <tr align="center">
+                                <td>{{ p[0] }}</td>
+                                <td>{{ p[1] }}</td>
+                                <td>{{ p[2] }}</td>
+                                <td>{{ p[3] }}</td>
+                                <td>{{ p[4] }}</td>
+                                <td>{{ p[5] }}</td>
+                                <td>{{ p[6] }}</td>
+                            </tr>
+                            {% endfor -%}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                {% endif %}
+                </form>
+            </div>
+        </div>
     </div>
-    <div class="col-xs-12" style="height:15px;"></div>
-
-        <table class="table table-sm">
-            <thead class="thead-light">
-                <tr align="center">
-                    <th scope="col">Age</th>
-                    <th scope="col">Sex</th>
-                    <th scope="col">BMI</th>
-                    <th scope="col">Number of children</th>
-                    <th scope="col">Is a smoker?</th>
-                    <th scope="col">Region</th>
-                    <th scope="col">Charges</th>
-                </tr>
-            </thead>
-            <tbody>
-                {%- for p in payload_list %}
-                <tr align="center">
-                    <td>{{ p[0] }}</td>
-                    <td>{{ p[1] }}</td>
-                    <td>{{ p[2] }}</td>
-                    <td>{{ p[3] }}</td>
-                    <td>{{ p[4] }}</td>
-                    <td>{{ p[5] }}</td>
-                    <td>{{ p[6] }}</td>
-                </tr>
-                {% endfor -%}
-            </tbody>
-        </table>
-    </form>
 </div>
-{% endif %}
 
 <script type="text/javascript">
-    function ShowStatement() {
-        var insert = document.getElementById("insert");
-        var select = document.getElementById("select");
-        var update = document.getElementById("update");
-        var del = document.getElementById("del");
-
-        var insert_statement = document.getElementById("insert_statement");
-        var select_statement = document.getElementById("select_statement");
-        var update_statement = document.getElementById("update_statement");
-        var del_statement = document.getElementById("del_statement");
-
-        insert_statement.style.display = insert.checked ? "block" : "none";
-        select_statement.style.display = select.checked ? "block" : "none";
-        update_statement.style.display = update.checked ? "block" : "none";
-        del_statement.style.display = del.checked ? "block" : "none";
+    // get the table element
+    var $table = document.getElementById("myTable"),
+    // number of rows per page
+    $n = 5,
+    // number of rows of the table
+    $rowCount = $table.rows.length,
+    // get the first cell's tag name (in the first row)
+    $firstRow = $table.rows[0].firstElementChild.tagName,
+    // boolean var to check if table has a head row
+    $hasHead = ($firstRow === "TH"),
+    // an array to hold each row
+    $tr = [],
+    // loop counters, to start count from rows[1] (2nd row) if the first row has a head tag
+    $i,$ii,$j = ($hasHead)?1:0,
+    // holds the first row if it has a (<TH>) & nothing if (<TD>)
+    $th = ($hasHead?$table.rows[(0)].outerHTML:"");
+    // count the number of pages
+    var $pageCount = Math.ceil($rowCount / $n);
+    // if we had one page only, then we have nothing to do ..
+    if ($pageCount > 1) {
+    // assign each row outHTML (tag name & innerHTML) to the array
+    for ($i = $j,$ii = 0; $i < $rowCount; $i++, $ii++)
+        $tr[$ii] = $table.rows[$i].outerHTML;
+    // create a div block to hold the buttons
+    $table.insertAdjacentHTML("afterend","<div id='buttons'></div");
+    // the first sort, default page is the first one
+    sort(1);
     }
 
-    function SelectAll(source) {
-        checkboxes = document.getElementsByName('select_checkbox');
-        for(var i=0, n=checkboxes.length;i<n;i++) {
-            checkboxes[i].checked = source.checked;
-        }
+    // ($p) is the selected page number. it will be generated when a user clicks a button
+    function sort($p) {
+    /* create ($rows) a variable to hold the group of rows
+    ** to be displayed on the selected page,
+    ** ($s) the start point .. the first row in each page, Do The Math
+    */
+    var $rows = $th,$s = (($n * $p)-$n);
+    for ($i = $s; $i < ($s+$n) && $i < $tr.length; $i++)
+        $rows += $tr[$i];
+    
+    // now the table has a processed group of rows ..
+    $table.innerHTML = $rows;
+    // create the pagination buttons
+    document.getElementById("buttons").innerHTML = pageButtons($pageCount,$p);
+    // CSS Stuff
+    document.getElementById("id"+$p).setAttribute("class","active");
     }
-</script>
+
+
+    // ($pCount) : number of pages,($cur) : current page, the selected one ..
+    function pageButtons($pCount,$cur) {
+    /* this variables will disable the "Prev" button on 1st page
+        and "next" button on the last one */
+    var $prevDis = ($cur == 1)?"disabled":"",
+        $nextDis = ($cur == $pCount)?"disabled":"",
+        /* this ($buttons) will hold every single button needed
+        ** it will creates each button and sets the onclick attribute
+        ** to the "sort" function with a special ($p) number..
+        */
+        $buttons = "<input type='button' value='&lt;&lt; Prev' onclick='sort("+($cur - 1)+")' "+$prevDis+">";
+    for ($i=1; $i<=$pCount;$i++)
+        $buttons += "<input type='button' id='id"+$i+"'value='"+$i+"' onclick='sort("+$i+")'>";
+    $buttons += "<input type='button' value='Next &gt;&gt;' onclick='sort("+($cur + 1)+")' "+$nextDis+">";
+    return $buttons;
+    }
+  </script>
 
 {% endblock content %}
