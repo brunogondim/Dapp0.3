@@ -16,6 +16,9 @@ import traceback
 import logging
 import requests
 import datasets_sqlite
+import datasets_regressaoLinear
+
+datasets_regressaoLinear.regressao()
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)

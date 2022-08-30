@@ -14,3 +14,14 @@ select * from Vertical_Filter limit 10
 SELECT * FROM Medical
 
 SELECT SUM(charges/(age*n_smoker))/COUNT(*) FROM (SELECT CAST(age as INT) as age,CASE WHEN smoker="yes" THEN 1.3 ELSE 1 END AS n_smoker, CAST(charges as DOUBLE) as charges, charges*(age*CASE WHEN smoker="yes" THEN 1.3 ELSE 1 END) as 'charges/(ageXsmoker)' FROM Medical)
+
+
+
+admin...
+SELECT * FROM sqlite_master WHERE type="table"
+
+
+    In the settings set: "sqlite.logLevel": "DEBUG"
+    Open command palette > SQLite: Open Database > show table
+    Open command palette > SQLite: Show output
+    Copy and paste the output here.
