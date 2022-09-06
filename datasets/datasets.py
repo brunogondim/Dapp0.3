@@ -18,7 +18,7 @@ import requests
 import datasets_sqlite
 import datasets_regressaoLinear
 
-datasets_regressaoLinear.regressao()
+# datasets_regressaoLinear.regressao()
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -87,7 +87,7 @@ def handle_advance(data):
         statement = hex2str(data["payload"])
         if statement[0:14] == "generate_model": # 'generate_model;simulation'
             my_class.generate_model(data,rollup_server,hex2str,str2hex)
-        if statement[0:9] == "use_model": #'use_model;simulation;50;yes' age;smoker
+        elif statement[0:9] == "use_model": #'use_model;simulation;50;yes' age;smoker
             values = statement.split(';')
             my_class.use_model(data,rollup_server,hex2str,str2hex,*values)
         else:

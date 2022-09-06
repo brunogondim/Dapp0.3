@@ -1,5 +1,5 @@
 {
   "fs": {
-    "files": ["datasets.py", "entrypoint.sh", "datasets_sqlite.py","data.db"]
+    "files": ["datasets.py", "entrypoint.sh", "datasets_sqlite.py","data.db","LinearAlgebraPurePython.py"]
   }
 }

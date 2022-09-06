@@ -68,6 +68,8 @@ import sqlite3
 import json
 import datasets_model
 
+import LinearAlgebraPurePython as la 
+
 class Myclass():
 
     def advance(self,data,rollup_server,hex2str,str2hex):
@@ -136,6 +138,29 @@ class Myclass():
                 k = cur.fetchall()
 
                 self.generate_file(self,k)
+            elif statement[15:] == "linear_regression":
+                con = sqlite3.connect("data.db")
+                cur = con.cursor()
+                cur.execute('SELECT * FROM medical')
+                r = cur.fetchall()
+
+                X = []
+                Y = []
+                for item in r:
+                    age = float(item[0])
+                    sex = 0 if item[1] == 'male' else 1
+                    bmi = float(item[2])
+                    children = float(item[3])
+                    smoker = 0 if item[4] == 'no' else 1
+                    #region = item[5]
+                    charges = float(item[6])
+
+                    X.append([age,sex,bmi,children,smoker])
+                    Y.append(charges)
+                coefs = la.least_squares(X, Y)
+                la.print_matrix(coefs)
+                coefs_str = ' '.join(map(str,coefs))
+                logger.info(f"model: {coefs_str}")
 
             else:
                 cur.execute(statement)
@@ -218,7 +243,8 @@ class Myclass():
             logger.info(f"Adding notice with payload: {payloadJson}")
             response = requests.post(rollup_server + "/notice", json={"payload": payload})
             logger.info(f"Received notice status {response.status_code} body {response.content}")
-
+    
+    
 
 
 
